@@ -4,5 +4,5 @@ namespace RentalService.Domain.Services.Interfaces;
 
 public interface IRentalPricingService
 {
-    decimal CalculatePrice(CarCategory category, int numberOfDays, long kilometers, decimal baseDayRental, decimal baseKmPrice);
+    decimal Calculate(CarCategory category, int days, long km);
 }

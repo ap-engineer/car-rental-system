@@ -7,7 +7,6 @@ namespace RentalService.Application.Services.Implementation;
 
 public sealed class RentalService(IRentalPricingService pricing) : IRentalService
 {
-    private readonly IRentalPricingService _pricing = pricing;
     private readonly Dictionary<string, Rental> _rentals = new();
 
     public void RegisterPickup(PickupRequest req)
@@ -25,18 +24,8 @@ public sealed class RentalService(IRentalPricingService pricing) : IRentalServic
 
         rental.RegisterReturn(req.ReturnDate, req.ReturnKm);
 
-        var price = _pricing.CalculatePrice(
-            rental.Category,
-            rental.NumberOfDays,
-            rental.KilometersDriven,
-            baseDayRental: 100, // configurable
-            baseKmPrice: 2 // configurable
-        );
+        var price = pricing.Calculate(rental.Category, rental.NumberOfDays, rental.KilometersDriven);
 
-        return new RentalResult(
-            rental.BookingNumber,
-            price,
-            rental.NumberOfDays,
-            rental.KilometersDriven);
+        return new RentalResult(rental.BookingNumber, price, rental.NumberOfDays, rental.KilometersDriven);
     }
 }

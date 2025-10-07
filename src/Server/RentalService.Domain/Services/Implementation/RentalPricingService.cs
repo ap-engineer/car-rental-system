@@ -5,14 +5,15 @@ namespace RentalService.Domain.Services.Implementation;
 
 public sealed class RentalPricingService : IRentalPricingService
 {
-    public decimal CalculatePrice(CarCategory category, int days, long km, decimal baseDayRental, decimal baseKmPrice)
-    {
-        return category switch
+    private const decimal BaseDayRental = 100;
+    private const decimal BaseKmPrice = 2;
+
+    public decimal Calculate(CarCategory category, int days, long km) =>
+        category switch
         {
-            CarCategory.SmallCar => baseDayRental * days,
-            CarCategory.Combi => baseDayRental * days * 1.3m + baseKmPrice * km,
-            CarCategory.Truck => baseDayRental * days * 1.5m + baseKmPrice * km * 1.5m,
+            CarCategory.SmallCar => BaseDayRental * days,
+            CarCategory.Combi => BaseDayRental * days * 1.3m + BaseKmPrice * km,
+            CarCategory.Truck => BaseDayRental * days * 1.5m + BaseKmPrice * km * 1.5m,
             _ => throw new ArgumentOutOfRangeException(nameof(category))
         };
-    }
 }

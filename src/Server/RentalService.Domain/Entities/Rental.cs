@@ -9,7 +9,6 @@ public sealed class Rental
 
     public DateTime? PickupDate { get; private set; }
     public long? PickupKm { get; private set; }
-
     public DateTime? ReturnDate { get; private set; }
     public long? ReturnKm { get; private set; }
 
@@ -25,21 +24,34 @@ public sealed class Rental
 
     public void RegisterPickup(DateTime date, long km)
     {
+        if (PickupDate.HasValue)
+            throw new InvalidOperationException("Pickup already registered.");
+
         PickupDate = date;
         PickupKm = km;
     }
 
     public void RegisterReturn(DateTime date, long km)
     {
+        if (!PickupDate.HasValue)
+            throw new InvalidOperationException("Pickup must be registered first.");
+
+        if (ReturnDate.HasValue)
+            throw new InvalidOperationException("Return already registered.");
+
         ReturnDate = date;
         ReturnKm = km;
     }
 
-    public int NumberOfDays => ReturnDate.HasValue && PickupDate.HasValue
-        ? (int)Math.Ceiling((ReturnDate.Value - PickupDate.Value).TotalDays)
-        : 0;
+    public int NumberOfDays => (PickupDate, ReturnDate) switch
+    {
+        (not null, not null) => Math.Max(1, (int)Math.Ceiling((ReturnDate.Value - PickupDate.Value).TotalDays)),
+        _ => 0
+    };
 
-    public long KilometersDriven => ReturnKm.HasValue && PickupKm.HasValue
-        ? ReturnKm.Value - PickupKm.Value
-        : 0;
+    public long KilometersDriven => (PickupKm, ReturnKm) switch
+    {
+        (not null, not null) => Math.Max(0, ReturnKm.Value - PickupKm.Value),
+        _ => 0
+    };
 }
