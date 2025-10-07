@@ -1,0 +1,7 @@
+﻿services:
+  rentalservice:
+    image: rentalservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+
