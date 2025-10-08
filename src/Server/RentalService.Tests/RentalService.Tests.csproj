@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\RentalService.Application\RentalService.Application.csproj" />
       <ProjectReference Include="..\RentalService.Domain\RentalService.Domain.csproj" />
+      <ProjectReference Include="..\RentalService.Infrastructure\RentalService.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
