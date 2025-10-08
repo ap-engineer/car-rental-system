@@ -45,12 +45,13 @@ const ReturnForm = ({onSuccess}: Props) => {
 
     return (
         <Box component="form" onSubmit={submit} sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-            <Stack spacing={1.5} sx={{flex: 1, overflow: 'auto'}}>
+            <Stack spacing={2} sx={{flex: 1, overflow: 'visible', pt: 0.5}}>
                 <TextField
                     label="Booking Number"
                     value={form.bookingNumber}
                     onChange={(e) => update("bookingNumber", e.target.value)}
                     required
+                    sx={{ mt: 1 }}
                 />
                 <TextField
                     label="Return Date"

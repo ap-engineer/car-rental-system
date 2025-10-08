@@ -10,6 +10,7 @@ const FormSection = ({children, title}: { children: ReactNode; title: string }) 
         elevation={2}
         sx={{
             p: 2,
+            pt: 3,
             height: '70vh',
             display: 'flex',
             flexDirection: 'column',
@@ -19,7 +20,7 @@ const FormSection = ({children, title}: { children: ReactNode; title: string }) 
         <Typography variant="h6" gutterBottom fontWeight="medium" sx={{mb: 1}}>
             {title}
         </Typography>
-        <Box sx={{flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden'}}>
+        <Box sx={{flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'visible', pt: 1}}>
             {children}
         </Box>
     </Paper>
