@@ -23,11 +23,12 @@ public sealed class RentalsController(IRentalService service) : ControllerBase
         {
             return NotFound(new { error = $"Rental with ID {id} not found." });
         }
+
         return Ok(rental);
     }
 
     [HttpPost("pickup")]
-    public async Task<IActionResult> RegisterPickup([FromBody] PickupRequest request)
+    public async Task<ActionResult<RentalResult>> RegisterPickup([FromBody] PickupRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -36,8 +37,8 @@ public sealed class RentalsController(IRentalService service) : ControllerBase
 
         try
         {
-            await service.RegisterPickup(request);
-            return Ok(new { message = "Pickup registered successfully" });
+            var result = await service.RegisterPickup(request);
+            return Ok(result);
         }
         catch (ArgumentException ex)
         {

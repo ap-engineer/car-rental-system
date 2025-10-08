@@ -5,6 +5,6 @@ public sealed record RentalResult(
     string BookingNumber,
     decimal Price,
     int Days,
-    long Km,
+    long? Km,
     bool IsReturned,
     DateTime? PickupDate);

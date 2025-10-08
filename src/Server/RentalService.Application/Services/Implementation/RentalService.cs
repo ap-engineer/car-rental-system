@@ -12,7 +12,7 @@ public sealed class RentalService(IRentalPricingService pricing, IRentalReposito
     // private static string GenerateBookingNumber()
     //     => $"B{DateTime.UtcNow.Ticks.ToString()[^6..]}";
 
-    public async Task RegisterPickup(PickupRequest req)
+    public async Task<RentalResult> RegisterPickup(PickupRequest req)
     {
         // Check if booking number already exists
         var existingRental = await repo.GetByBookingNumberAsync(req.BookingNumber);
@@ -28,6 +28,16 @@ public sealed class RentalService(IRentalPricingService pricing, IRentalReposito
 
         await repo.AddAsync(rental);
         await repo.SaveChangesAsync();
+
+        return new RentalResult(
+            rental.Id,
+            rental.BookingNumber,
+            0,
+            0,
+            rental.PickupKm,
+            rental.IsReturned,
+            rental.PickupDate
+        );
     }
 
     public async Task<RentalResult> RegisterReturn(ReturnRequest req)
