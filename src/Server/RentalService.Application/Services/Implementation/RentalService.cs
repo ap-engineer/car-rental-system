@@ -2,30 +2,34 @@ using RentalService.Application.DTOs;
 using RentalService.Application.Services.Interfaces;
 using RentalService.Domain.Entities;
 using RentalService.Domain.Services.Interfaces;
+using RentalService.Infrastructure.Repositories.Interfaces;
 
 namespace RentalService.Application.Services.Implementation;
 
-public sealed class RentalService(IRentalPricingService pricing) : IRentalService
+public sealed class RentalService(IRentalPricingService pricing, IRentalRepository repo) : IRentalService
 {
-    private readonly Dictionary<string, Rental> _rentals = new();
-
-    public void RegisterPickup(PickupRequest req)
+    public async Task RegisterPickup(PickupRequest req)
     {
         var category = Enum.Parse<CarCategory>(req.Category, true);
         var rental = new Rental(req.BookingNumber, req.RegistrationNumber, req.CustomerId, category);
         rental.RegisterPickup(req.PickupDate, req.PickupKm);
-        _rentals[req.BookingNumber] = rental;
+        
+        await repo.AddAsync(rental);
+        await repo.SaveChangesAsync();
     }
 
-    public RentalResult RegisterReturn(ReturnRequest req)
+    public async Task<RentalResult> RegisterReturn(ReturnRequest req)
     {
-        if (!_rentals.TryGetValue(req.BookingNumber, out var rental))
-            throw new KeyNotFoundException($"Booking {req.BookingNumber} not found.");
+        var rental = await repo.GetAsync(req.BookingNumber)
+                     ?? throw new KeyNotFoundException($"Booking {req.BookingNumber} not found.");
 
         rental.RegisterReturn(req.ReturnDate, req.ReturnKm);
 
         var price = pricing.Calculate(rental.Category, rental.NumberOfDays, rental.KilometersDriven);
-
+        
+        await repo.UpdateAsync(rental);
+        await repo.SaveChangesAsync();
+        
         return new RentalResult(rental.BookingNumber, price, rental.NumberOfDays, rental.KilometersDriven);
     }
 }

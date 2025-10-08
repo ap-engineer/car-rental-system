@@ -4,6 +4,6 @@ namespace RentalService.Application.Services.Interfaces;
 
 public interface IRentalService
 {
-    void RegisterPickup(PickupRequest request);
-    RentalResult RegisterReturn(ReturnRequest request);
+    Task RegisterPickup(PickupRequest request);
+    Task<RentalResult> RegisterReturn(ReturnRequest request);
 }

@@ -1,11 +1,11 @@
 namespace RentalService.Domain.Entities;
 
-public sealed class Rental
+public sealed class Rental(string bookingNumber, string registrationNumber, string customerId, CarCategory category)
 {
-    public string BookingNumber { get; }
-    public string RegistrationNumber { get; }
-    public string CustomerId { get; }
-    public CarCategory Category { get; }
+    public string BookingNumber { get; } = bookingNumber;
+    public string RegistrationNumber { get; } = registrationNumber;
+    public string CustomerId { get; } = customerId;
+    public CarCategory Category { get; } = category;
 
     public DateTime? PickupDate { get; private set; }
     public long? PickupKm { get; private set; }
@@ -14,18 +14,16 @@ public sealed class Rental
 
     public bool IsReturned => ReturnDate.HasValue;
 
-    public Rental(string bookingNumber, string registrationNumber, string customerId, CarCategory category)
-    {
-        BookingNumber = bookingNumber;
-        RegistrationNumber = registrationNumber;
-        CustomerId = customerId;
-        Category = category;
-    }
-
     public void RegisterPickup(DateTime date, long km)
     {
         if (PickupDate.HasValue)
             throw new InvalidOperationException("Pickup already registered.");
+
+        if (date > DateTime.Now)
+            throw new ArgumentException("Pickup date cannot be in the future.");
+
+        if (km < 0)
+            throw new ArgumentException("Pickup kilometers cannot be negative.");
 
         PickupDate = date;
         PickupKm = km;
@@ -38,6 +36,18 @@ public sealed class Rental
 
         if (ReturnDate.HasValue)
             throw new InvalidOperationException("Return already registered.");
+
+        if (date > DateTime.Now)
+            throw new ArgumentException("Return date cannot be in the future.");
+
+        if (date < PickupDate.Value)
+            throw new ArgumentException("Return date cannot be before pickup date.");
+
+        if (km < 0)
+            throw new ArgumentException("Return kilometers cannot be negative.");
+
+        if (PickupKm.HasValue && km < PickupKm.Value)
+            throw new ArgumentException("Return kilometers cannot be less than pickup kilometers.");
 
         ReturnDate = date;
         ReturnKm = km;
