@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { Box, TextField, MenuItem, Button, Stack } from "@mui/material";
+import {useState} from "react";
+import {Box, TextField, MenuItem, Button, Stack} from "@mui/material";
 import toast from "react-hot-toast";
-import type {CarCategory, PickupRequest, RentalResult, SafeValue} from "../types/rental";
-import { registerPickup } from "../api/rentalApi";
+import type {RentalResult} from "../types/rentalResult.ts";
+import {registerPickup} from "../api/rentalApi";
+import type { CarCategory } from "../types/carCategory.ts";
+import type {SafeValue} from "../types/safeValue.ts";
+import type { PickupRequest } from "../types/pickupRequest.ts";
 
 type Props = {
     onSuccess: (result: RentalResult) => void;
@@ -10,7 +13,7 @@ type Props = {
 
 const categories: CarCategory[] = ["SmallCar", "Combi", "Truck"];
 
-export default function PickupForm({ onSuccess }: Props) {
+const PickupForm = ({onSuccess}: Props) => {
     const [form, setForm] = useState({
         bookingNumber: "",
         registrationNumber: "",
@@ -21,7 +24,7 @@ export default function PickupForm({ onSuccess }: Props) {
     });
     const [loading, setLoading] = useState(false);
 
-    const update = (k: string, v: SafeValue) => setForm((s) => ({ ...s, [k]: v }));
+    const update = (k: string, v: SafeValue) => setForm((s) => ({...s, [k]: v}));
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -51,8 +54,8 @@ export default function PickupForm({ onSuccess }: Props) {
     };
 
     return (
-        <Box component="form" onSubmit={submit} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Stack spacing={1.5} sx={{ flex: 1, overflow: 'auto' }}>
+        <Box component="form" onSubmit={submit} sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            <Stack spacing={1.5} sx={{flex: 1, overflow: 'auto'}}>
                 <TextField
                     label="Booking Number"
                     value={form.bookingNumber}
@@ -86,7 +89,7 @@ export default function PickupForm({ onSuccess }: Props) {
                     type="datetime-local"
                     value={form.pickupDate}
                     onChange={(e) => update("pickupDate", e.target.value)}
-                    InputLabelProps={{ shrink: true }}
+                    InputLabelProps={{shrink: true}}
                     required
                 />
                 <TextField
@@ -94,13 +97,13 @@ export default function PickupForm({ onSuccess }: Props) {
                     type="number"
                     value={form.pickupKm}
                     onChange={(e) => update("pickupKm", e.target.value)}
-                    inputProps={{ min: 0 }}
+                    inputProps={{min: 0}}
                 />
-                <Button 
-                    type="submit" 
-                    variant="contained" 
+                <Button
+                    type="submit"
+                    variant="contained"
                     disabled={loading}
-                    sx={{ mt: 'auto' }}
+                    sx={{mt: 'auto'}}
                 >
                     {loading ? "Submitting..." : "Submit Pickup"}
                 </Button>
@@ -108,3 +111,5 @@ export default function PickupForm({ onSuccess }: Props) {
         </Box>
     );
 }
+
+export default PickupForm;

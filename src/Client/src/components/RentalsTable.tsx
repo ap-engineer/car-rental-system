@@ -12,14 +12,14 @@ import {
     Box
 } from "@mui/material";
 import {getRentals} from "../api/rentalApi";
-import type {RentalResult} from "../types/rental";
+import type {RentalResult} from "../types/rentalResult.ts";
 import {toast} from "react-hot-toast";
 
 interface RentalsTableProps {
     refreshTrigger?: number; // Can be used to trigger a refresh from parent
 }
 
-export default function RentalsTable({refreshTrigger = 0}: RentalsTableProps) {
+const RentalsTable = ({refreshTrigger = 0}: RentalsTableProps) => {
     const [rows, setRows] = useState<RentalResult[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -146,3 +146,4 @@ export default function RentalsTable({refreshTrigger = 0}: RentalsTableProps) {
         </Box>
     );
 }
+export default RentalsTable;
