@@ -8,17 +8,60 @@ namespace RentalService.Controllers;
 [Route("api/[controller]")]
 public sealed class RentalsController(IRentalService service) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<RentalResult>>> GetAll()
+    {
+        var rentals = await service.GetAllRentals();
+        return Ok(rentals);
+    }
+
     [HttpPost("pickup")]
     public IActionResult RegisterPickup([FromBody] PickupRequest request)
     {
-        service.RegisterPickup(request);
-        return Ok(new { message = "Pickup registered successfully" });
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            service.RegisterPickup(request);
+            return Ok(new { message = "Pickup registered successfully" });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { error = ex.Message });
+        }
     }
 
     [HttpPost("return")]
     public ActionResult<RentalResult> RegisterReturn([FromBody] ReturnRequest request)
     {
-        var result = service.RegisterReturn(request);
-        return Ok(result);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var result = service.RegisterReturn(request);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { error = ex.Message });
+        }
     }
 }
