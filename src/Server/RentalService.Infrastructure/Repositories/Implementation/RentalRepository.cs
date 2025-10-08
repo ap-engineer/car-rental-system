@@ -6,7 +6,10 @@ namespace RentalService.Infrastructure.Repositories.Implementation;
 
 public sealed class RentalRepository(CarRentalDbContext db) : IRentalRepository
 {
-    public async Task<Rental?> GetAsync(string bookingNumber, CancellationToken ct = default)
+    public async Task<Rental?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => await db.Rentals.FirstOrDefaultAsync(r => r.Id == id, ct);
+
+    public async Task<Rental?> GetByBookingNumberAsync(string bookingNumber, CancellationToken ct = default)
         => await db.Rentals.FirstOrDefaultAsync(r => r.BookingNumber == bookingNumber, ct);
 
     public async Task<IReadOnlyList<Rental>> GetAllAsync(CancellationToken ct = default)
@@ -21,6 +24,15 @@ public sealed class RentalRepository(CarRentalDbContext db) : IRentalRepository
         return Task.CompletedTask;
     }
 
-    public Task SaveChangesAsync(CancellationToken ct = default)
-        => db.SaveChangesAsync(ct);
+    public async Task SaveChangesAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
+        {
+            throw new InvalidOperationException("Booking number already exists.", ex);
+        }
+    }
 }
