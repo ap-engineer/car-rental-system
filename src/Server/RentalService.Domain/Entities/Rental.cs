@@ -46,7 +46,7 @@ public sealed class Rental(string bookingNumber, string registrationNumber, stri
         if (km < 0)
             throw new ArgumentException("Return kilometers cannot be negative.");
 
-        if (PickupKm.HasValue && km < PickupKm.Value)
+        if (km < PickupKm)
             throw new ArgumentException("Return kilometers cannot be less than pickup kilometers.");
 
         ReturnDate = date;

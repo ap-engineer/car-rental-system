@@ -4,15 +4,46 @@ using RentalService.Domain.Configuration;
 using RentalService.Domain.Services.Implementation;
 using RentalService.Domain.Services.Interfaces;
 using RentalService.Infrastructure;
-using RentalService.Infrastructure.Repositories;
+using RentalService.Infrastructure.Repositories.Implementation;
 using RentalService.Infrastructure.Repositories.Interfaces;
 using MainRentalService = RentalService.Application.Services.Implementation.RentalService;
 
+const string rentalSearchPolicies = "APRentalService";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(rentalSearchPolicies,
+        corsPolicyBuilder =>
+        {
+            corsPolicyBuilder.SetIsOriginAllowed((host) => true)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithExposedHeaders("Content-Disposition");
+        });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new()
+    {
+        Title = "Search Aggregator API",
+        Version = "v1",
+        Description = "API for rental service"
+    });
+
+    // Include XML comments for better Swagger documentation
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+});
 
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -41,6 +72,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<CarRentalDbContext>();
     db.Database.Migrate();
 }
+
+app.UseCors(rentalSearchPolicies);
 
 app.UseHttpsRedirection();
 app.MapControllers();

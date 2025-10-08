@@ -8,6 +8,13 @@ namespace RentalService.Controllers;
 [Route("api/[controller]")]
 public sealed class RentalsController(IRentalService service) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<RentalResult>>> GetAll()
+    {
+        var rentals = await service.GetAllRentals();
+        return Ok(rentals);
+    }
+
     [HttpPost("pickup")]
     public IActionResult RegisterPickup([FromBody] PickupRequest request)
     {
