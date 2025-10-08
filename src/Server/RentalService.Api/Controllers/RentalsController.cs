@@ -15,8 +15,19 @@ public sealed class RentalsController(IRentalService service) : ControllerBase
         return Ok(rentals);
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<RentalResult>> GetById(Guid id)
+    {
+        var rental = await service.GetRentalById(id);
+        if (rental == null)
+        {
+            return NotFound(new { error = $"Rental with ID {id} not found." });
+        }
+        return Ok(rental);
+    }
+
     [HttpPost("pickup")]
-    public IActionResult RegisterPickup([FromBody] PickupRequest request)
+    public async Task<IActionResult> RegisterPickup([FromBody] PickupRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -25,7 +36,7 @@ public sealed class RentalsController(IRentalService service) : ControllerBase
 
         try
         {
-            service.RegisterPickup(request);
+            await service.RegisterPickup(request);
             return Ok(new { message = "Pickup registered successfully" });
         }
         catch (ArgumentException ex)
@@ -39,7 +50,7 @@ public sealed class RentalsController(IRentalService service) : ControllerBase
     }
 
     [HttpPost("return")]
-    public ActionResult<RentalResult> RegisterReturn([FromBody] ReturnRequest request)
+    public async Task<ActionResult<RentalResult>> RegisterReturn([FromBody] ReturnRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -48,7 +59,7 @@ public sealed class RentalsController(IRentalService service) : ControllerBase
 
         try
         {
-            var result = service.RegisterReturn(request);
+            var result = await service.RegisterReturn(request);
             return Ok(result);
         }
         catch (KeyNotFoundException ex)

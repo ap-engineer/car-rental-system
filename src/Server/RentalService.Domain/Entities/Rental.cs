@@ -2,6 +2,7 @@ namespace RentalService.Domain.Entities;
 
 public sealed class Rental(string bookingNumber, string registrationNumber, string customerId, CarCategory category)
 {
+    public Guid Id { get; } = Guid.NewGuid();
     public string BookingNumber { get; } = bookingNumber;
     public string RegistrationNumber { get; } = registrationNumber;
     public string CustomerId { get; } = customerId;

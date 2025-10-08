@@ -11,10 +11,11 @@ public sealed class CarRentalDbContext(DbContextOptions<CarRentalDbContext> opti
     {
         modelBuilder.Entity<Rental>(entity =>
         {
-            entity.HasKey(r => r.BookingNumber);
-            entity.Property(r => r.BookingNumber).IsRequired();
-            entity.Property(r => r.RegistrationNumber).IsRequired();
-            entity.Property(r => r.CustomerId).IsRequired();
+            entity.HasKey(r => r.Id);
+            entity.HasIndex(r => r.BookingNumber).IsUnique();
+            entity.Property(r => r.BookingNumber).IsRequired().HasMaxLength(50);
+            entity.Property(r => r.RegistrationNumber).IsRequired() .HasMaxLength(20);
+            entity.Property(r => r.CustomerId).IsRequired().HasMaxLength(50);
             entity.Property(r => r.Category).IsRequired();
         });
     }

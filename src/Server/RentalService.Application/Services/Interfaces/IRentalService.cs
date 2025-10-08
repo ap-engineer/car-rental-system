@@ -6,5 +6,6 @@ public interface IRentalService
 {
     Task RegisterPickup(PickupRequest request);
     Task<RentalResult> RegisterReturn(ReturnRequest request);
+    Task<RentalResult?> GetRentalById(Guid id);
     Task<IReadOnlyList<RentalResult>> GetAllRentals();
 }
