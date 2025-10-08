@@ -1,5 +1,5 @@
 import {type FormEvent, useState} from "react";
-import { Box, Paper, TextField, Button, Stack, Typography } from "@mui/material";
+import { Box, TextField, Button, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import type {ReturnRequest, RentalResult} from "../types/rental";
 import { registerReturn } from "../api/rentalApi";
@@ -43,9 +43,8 @@ export default function ReturnForm({ onSuccess }: Props) {
     };
 
     return (
-        <Paper sx={{ p: 3, backgroundColor: "background.paper" }} component="form" onSubmit={submit}>
-            <Typography variant="h6" gutterBottom>Register Return</Typography>
-            <Stack spacing={2}>
+        <Box component="form" onSubmit={submit} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Stack spacing={1.5} sx={{ flex: 1, overflow: 'auto' }}>
                 <TextField
                     label="Booking Number"
                     value={form.bookingNumber}
@@ -67,12 +66,15 @@ export default function ReturnForm({ onSuccess }: Props) {
                     onChange={(e) => update("returnKm", e.target.value)}
                     inputProps={{ min: 0 }}
                 />
-                <Box>
-                    <Button type="submit" variant="contained" disabled={loading}>
-                        {loading ? "Submitting..." : "Submit Return"}
-                    </Button>
-                </Box>
+                <Button 
+                    type="submit" 
+                    variant="contained" 
+                    disabled={loading}
+                    sx={{ mt: 'auto' }}
+                >
+                    {loading ? "Submitting..." : "Submit Return"}
+                </Button>
             </Stack>
-        </Paper>
+        </Box>
     );
 }

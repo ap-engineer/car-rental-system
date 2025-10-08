@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Box, Paper, TextField, MenuItem, Button, Stack, Typography } from "@mui/material";
+import { Box, TextField, MenuItem, Button, Stack } from "@mui/material";
 import toast from "react-hot-toast";
-import type {CarCategory, PickupRequest, RentalResult} from "../types/rental";
+import type {CarCategory, PickupRequest, RentalResult, SafeValue} from "../types/rental";
 import { registerPickup } from "../api/rentalApi";
 
 type Props = {
@@ -21,7 +21,7 @@ export default function PickupForm({ onSuccess }: Props) {
     });
     const [loading, setLoading] = useState(false);
 
-    const update = (k: string, v: any) => setForm((s) => ({ ...s, [k]: v }));
+    const update = (k: string, v: SafeValue) => setForm((s) => ({ ...s, [k]: v }));
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -51,9 +51,8 @@ export default function PickupForm({ onSuccess }: Props) {
     };
 
     return (
-        <Paper sx={{ p: 3, backgroundColor: "background.paper" }} component="form" onSubmit={submit}>
-            <Typography variant="h6" gutterBottom>Register Pickup</Typography>
-            <Stack spacing={2}>
+        <Box component="form" onSubmit={submit} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Stack spacing={1.5} sx={{ flex: 1, overflow: 'auto' }}>
                 <TextField
                     label="Booking Number"
                     value={form.bookingNumber}
@@ -97,12 +96,15 @@ export default function PickupForm({ onSuccess }: Props) {
                     onChange={(e) => update("pickupKm", e.target.value)}
                     inputProps={{ min: 0 }}
                 />
-                <Box>
-                    <Button type="submit" variant="contained" disabled={loading}>
-                        {loading ? "Submitting..." : "Submit Pickup"}
-                    </Button>
-                </Box>
+                <Button 
+                    type="submit" 
+                    variant="contained" 
+                    disabled={loading}
+                    sx={{ mt: 'auto' }}
+                >
+                    {loading ? "Submitting..." : "Submit Pickup"}
+                </Button>
             </Stack>
-        </Paper>
+        </Box>
     );
 }

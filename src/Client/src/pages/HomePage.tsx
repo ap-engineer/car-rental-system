@@ -1,24 +1,25 @@
-import {useState} from 'react';
+import {type ReactNode, useState} from 'react';
 import {Container, Grid, Paper, Typography, Box} from '@mui/material';
 import {Toaster} from 'react-hot-toast';
 import PickupForm from '../components/PickupForm';
 import ReturnForm from '../components/ReturnForm';
 import RentalsTable from '../components/RentalsTable';
 
-const FormSection = ({children, title}: { children: React.ReactNode; title: string }) => (
+const FormSection = ({children, title}: { children: ReactNode; title: string }) => (
     <Paper
         elevation={2}
         sx={{
-            p: 3,
-            height: '100%',
+            p: 2,
+            height: '70vh',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            overflow: 'hidden'
         }}
     >
-        <Typography variant="h6" gutterBottom fontWeight="medium">
+        <Typography variant="h6" gutterBottom fontWeight="medium" sx={{ mb: 1 }}>
             {title}
         </Typography>
-        <Box sx={{mt: 2, flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
+        <Box sx={{flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden'}}>
             {children}
         </Box>
     </Paper>
@@ -33,35 +34,47 @@ export default function HomePage() {
     };
 
     return (
-        <Container maxWidth="xl" sx={{py: 4}}>
-            <Toaster position="top-right"/>
+        <Box sx={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <Container maxWidth="xl" sx={{ py: 2, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <Toaster position="top-right"/>
 
-            <Box mb={4}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Car Rental System
-                </Typography>
-                <Typography color="textSecondary">
-                    Manage vehicle pickups and returns
-                </Typography>
-            </Box>
+                <Box mb={2}>
+                    <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 1 }}>
+                        Car Rental System
+                    </Typography>
+                    <Typography color="textSecondary" variant="body2">
+                        Manage vehicle pickups and returns
+                    </Typography>
+                </Box>
 
-            <Grid container spacing={3}>
-                <Grid>
-                    <FormSection title="Pickup Vehicle">
-                        <PickupForm onSuccess={handleSuccess}/>
-                    </FormSection>
-                </Grid>
-                
-                <Grid >
-                    <FormSection title="Return Vehicle">
-                        <ReturnForm onSuccess={handleSuccess}/>
-                    </FormSection>
-                </Grid>
+                <Grid container spacing={2} sx={{ flex: 1, overflow: 'hidden' }}>
+                    <Grid size={{ xs: 12, md: 3 }}>
+                        <FormSection title="Pickup Vehicle">
+                            <PickupForm onSuccess={handleSuccess}/>
+                        </FormSection>
+                    </Grid>
+                    
+                    <Grid size={{ xs: 12, md: 3 }}>
+                        <FormSection title="Return Vehicle">
+                            <ReturnForm onSuccess={handleSuccess}/>
+                        </FormSection>
+                    </Grid>
 
-                <Grid>
-                    <RentalsTable refreshTrigger={refreshKey}/>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Paper
+                            elevation={2}
+                            sx={{
+                                height: '70vh',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                overflow: 'hidden'
+                            }}
+                        >
+                            <RentalsTable refreshTrigger={refreshKey}/>
+                        </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Container>
+            </Container>
+        </Box>
     );
 }
